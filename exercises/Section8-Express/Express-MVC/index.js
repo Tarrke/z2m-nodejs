@@ -1,7 +1,10 @@
 const express = require('express');
+const path = require('path');
+// Needed for loading the configuration from app.conf
 const fs = require('fs');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
 
+// Loading our routes
 const friendsRouter = require('./routes/friends.route');
 const messagesRouter = require('./routes/messages.route');
 
@@ -35,6 +38,11 @@ let reqId = 0;
 // Our Express server
 const app = express();
 
+// Express configuration
+app.set('env', 'production');
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+
 // Logging Middlware
 app.use((req, res, next) => {
     const requestId = ++reqId;
@@ -43,6 +51,9 @@ app.use((req, res, next) => {
     next();
     console.log(`${requestId}: done in ${Date.now() - start} ms.`);
 });
+
+// Serving the static web site
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // JSON parsing middleware
 app.use(
@@ -59,8 +70,14 @@ app.use(
 // app.post('/messages', messagesController.postMessage);
 
 // With Router, work done in /routes/x.route.js
+app.get('/', (req, res) => {
+    res.render('index', {title: 'Hey it\'s me', caption: 'Let\'s go skiing.'});
+    // res.sendFile(path.join());
+});
 app.use('/friends', friendsRouter);
 app.use('/messages', messagesRouter);
+
+console.log(`Port: ${PORT}`);
 
 app.listen( PORT, () => {
     console.log(`Listenning on ${PORT}...`);
