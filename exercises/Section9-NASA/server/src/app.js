@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 
@@ -34,8 +35,12 @@ app.use(cors({
 
 // We just deal with json
 app.use(express.json());
-
+app.use(express.static(path.join(__dirname, '..', 'public')));
 // Loading our Routes
 app.use(planetsRouter);
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
 
 module.exports = app;
