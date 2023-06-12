@@ -1,8 +1,10 @@
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 
 const planetsRouter = require('./routes/planets/planets.router');
+const launchesRouter = require('./routes/launches/launches.router');
 
 const app = express();
 
@@ -15,7 +17,8 @@ app.use( (req, res, next) => {
 });
 */
 
-// Logging middleware for copy
+/*
+// Logging middleware
 let reqId = 0;
 app.use( (req, res, next) => {
     const thisReq = ++reqId;
@@ -27,17 +30,23 @@ app.use( (req, res, next) => {
 
     console.log(`${thisReq} - ${new Date().toLocaleString().replace(', ', ' ')} - ${req.ip} - ${req.method} ${req.url} - ${res.statusCode} - ${solvedTime} ms`);
 });
+*/
+
 
 // Setting up CORS middleware
 app.use(cors({
     origin: 'http://localhost:3001'
 }));
 
+app.use(morgan('combined'));
+
 // We just deal with json
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
+
 // Loading our Routes
 app.use(planetsRouter);
+app.use(launchesRouter);
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
