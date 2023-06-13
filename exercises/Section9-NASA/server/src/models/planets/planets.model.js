@@ -1,13 +1,9 @@
 // CSV Parser
 const { parse } = require('csv-parse');
-// To test the data
-const assert = require('assert');
-// Read the file from the HDD
+
 const fs = require('fs');
 const path = require('path');
 
-// Can't reassign but can modify the contents...
-// const result = [];
 const habitablePlanets = [];
 
 function isHabitablePlanet(planet) {
@@ -16,17 +12,6 @@ function isHabitablePlanet(planet) {
         && ( (planet['koi_prad']  < 1.6) )
     );
 }
-
-/*
-const promise = new Promise( (resolve, reject) => {
-
-});
-promise.then( () => {
-
-});
-const result = await promise;
-console.log(result);
-*/
 
 // Read the data in file as a stream
 function loadPlanetsData() {
