@@ -11,6 +11,8 @@ import {
   withStyles,
 } from "arwes";
 
+import { Appear, Paragraph } from "arwes";
+
 import usePlanets from "../hooks/usePlanets";
 import useLaunches from "../hooks/useLaunches";
 
@@ -92,6 +94,12 @@ const AppLayout = props => {
             </Route>
             <Route exact path="/history">
               <History entered={anim.entered} launches={launches} />
+            </Route>
+            <Route path='*'>
+              <Appear id="404" animate show={props.entered}>
+                <Paragraph>This page doesn't exists</Paragraph>
+              </Appear>
+
             </Route>
           </Switch>
           </div>
