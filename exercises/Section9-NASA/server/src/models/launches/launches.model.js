@@ -43,9 +43,14 @@ launches_by_name.set(launch_2.mission_name, launch_2);
 launches_by_id.set(launch.flightNumber, launch);
 launches_by_name.set(launch.mission_name, launch);
 
-
+function getAllLaunches() {
+    return Array.from(launches_by_id.values()).sort((a, b) => {
+        return a.flightNumber - b.flightNumber;
+    });
+}
 
 module.exports = {
-    launches_by_id,
-    launches_by_name,
+    //launches_by_id,
+    //launches_by_name,
+    getAllLaunches,
 };
