@@ -38,7 +38,7 @@ function httpDeleteLaunch(req, res) {
 
     if( isNaN(id) || id < 0 ) {
         return res.status(400).json({
-            error: "Passed id is not an id. Should be a postive number."
+            error: 'Passed id is not an id. Should be a postive number.'
         });
     }
 
