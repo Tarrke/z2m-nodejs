@@ -1,0 +1,13 @@
+{
+  "name": "section11-workers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "threads.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node threads.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
