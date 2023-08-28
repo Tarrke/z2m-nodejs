@@ -65,12 +65,6 @@ function addNewLaunch(launch) {
         upcoming: true,
         success: true,
     }));
-    launches_by_name.set(launch.mission,    Object.assign(launch, { 
-        flightNumber: latestFlightNumber,
-        customer: ['TKC Corp', 'NASA'],
-        upcoming: true,
-        success: true,
-    }));
 }
 
 function existsLaunchWithId(launchId) {
