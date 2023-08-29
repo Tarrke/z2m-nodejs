@@ -35,7 +35,7 @@ app.use( (req, res, next) => {
 
 // Setting up CORS middleware
 app.use(cors({
-    origin: 'http://localhost:3001'
+    origin: 'http://localhost:3000'
 }));
 
 app.use(morgan('combined'));

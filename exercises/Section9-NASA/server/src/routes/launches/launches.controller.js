@@ -5,8 +5,8 @@ const {
     existsLaunchWithId 
 } = require('../../models/launches/launches.model');
 
-function httpGetAllLaunches(req, res) {
-    return res.status(200).json(getAllLaunches());
+async function httpGetAllLaunches(req, res) {
+    return res.status(200).json(await getAllLaunches());
 }
 
 function httpPostLaunch(req, res) {
@@ -33,7 +33,7 @@ function httpPostLaunch(req, res) {
     return res.status(201).json(launch);
 }
 
-function httpDeleteLaunch(req, res) {
+async function httpDeleteLaunch(req, res) {
     const id = parseInt(req.params.id);
 
     if( isNaN(id) || id < 0 ) {
@@ -42,13 +42,13 @@ function httpDeleteLaunch(req, res) {
         });
     }
 
-    if( !existsLaunchWithId(id) ) {
+    if( !await existsLaunchWithId(id) ) {
         return res.status(404).json({
             error: `Flight with id ${id} not found.`
         });
     }
 
-    const aborted = abortLaunchById(id);
+    const aborted = await abortLaunchById(id);
     return res.status(200).json(aborted);
 }
 

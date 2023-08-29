@@ -1,7 +1,11 @@
+const { default: mongoose } = require('mongoose');
+const launches = require('./launches.mongo');
+
 const launches_by_id = new Map();
-const launches_by_name = new Map();
 
 let latestFlightNumber = 0;
+
+
 
 const launch = {
     flightNumber: 100,
@@ -33,56 +37,71 @@ const launch_3 = {
     target: "Kepler-442 b",
     customers: ["NASA","TKC Corp"],
     upcoming: false,
-    success: true,
+    success: false,
 }
 
-// TODO: remove this and load the data from the fs
-addPastLaunch(launch, true);
-addPastLaunch(launch_2, false);
+// Some launch to populate some data...
+addNewLaunch(launch);
+addNewLaunch(launch_2);
 addNewLaunch(launch_3);
 
-function getAllLaunches() {
+async function getAllLaunches() {
+    /*
     return Array.from(launches_by_id.values()).sort((a, b) => {
+        return a.flightNumber - b.flightNumber;
+    });
+    */
+    const l = await launches.find({}, {'__v': 0, '_id': 0 });
+    return Array.from(l.values()).sort( (a,b) => {
         return a.flightNumber - b.flightNumber;
     });
 }
 
-function addPastLaunch(launch, success) {
-    ++latestFlightNumber;
-    launches_by_id.set(latestFlightNumber, Object.assign(launch, { 
-        flightNumber: latestFlightNumber,
+async function addNewLaunch(launch) {
+    const ll = (await launches.findOne({}).sort('-flightNumber').exec());
+    const nfn = ll?ll.flightNumber:0;
+    const newFN = launch.flightNumber?launch.flightNumber:nfn+1;
+    const newUp =  launch.upcoming!=null?launch.upcoming:true;
+
+    launch = Object.assign(launch, {
+        flightNumber: newFN,
         customer: ['TKC Corp', 'NASA'],
-        upcoming: false,
-        success: success,
-    }));    
+        upcoming: newUp,
+    });
+
+    try {
+        await launches.updateOne({
+            flightNumber: launch.flightNumber,
+        },
+        launch, {
+            upsert: true
+        });
+    } catch(err) {
+        console.error(`Could not save the launch: ${err}.`);
+    }
 }
 
-function addNewLaunch(launch) {
-    ++latestFlightNumber;
-    launches_by_id.set(latestFlightNumber, Object.assign(launch, { 
-        flightNumber: latestFlightNumber,
-        customer: ['TKC Corp', 'NASA'],
-        upcoming: true,
-        success: true,
-    }));
+async function existsLaunchWithId(launchId) {
+    // return launches_by_id.has(launchId);
+    if( await launches.findOne({flightNumber: launchId}) ) {
+        console.log(`found the launch ${launchId}`);
+        return true;
+    }
+    console.log(`not found the launch ${launchId}`);
+    return false;
 }
 
-function existsLaunchWithId(launchId) {
-    return launches_by_id.has(launchId);
-}
-
-function abortLaunchById(id) {
-    const aborted = launches_by_id.get(id);
+async function abortLaunchById(id) {
+    const aborted = await launches.findOne({flightNumber: id});
+    console.log(aborted);
     aborted.upcoming = false;
     aborted.success = false;
+    await launches.deleteOne({flightNumber: id});
 
-    // return launches_by_id.delete(id);
     return aborted;
 }
 
 module.exports = {
-    //launches_by_id,
-    //launches_by_name,
     getAllLaunches,
     addNewLaunch,
     abortLaunchById,
